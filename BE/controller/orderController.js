@@ -70,11 +70,15 @@ class OrderController {
     };
     try {
       const orderId = parseInt(req.params.id, 10);
-      const { quantity } = req.body;
+      const { quantity, totalPrice } = req.body;
 
       await prisma.order.update({
         where: { order_id: orderId },
-        data: { quantity },
+        data: {
+          quantity,
+          total_price: totalPrice,
+          updatedAt: new Date(),
+        },
         include: {
           customer: true,
           items: true,
@@ -93,9 +97,9 @@ class OrderController {
       data: null,
     };
     try {
-      const orderId = parseInt(req.params.id, 10);
+      const orderId = parseInt(req.params.id);
 
-      const deletedItem = await prisma.item.delete({
+      await prisma.order.delete({
         where: { order_id: orderId },
         include: {
           customer: true,
@@ -103,7 +107,6 @@ class OrderController {
         },
       });
       response.message = "Delete order success";
-      response.data = deletedItem;
       res.status(200).json(response);
     } catch (error) {
       res.status(500).json({ message: "Delete order failed" });

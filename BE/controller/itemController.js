@@ -31,23 +31,16 @@ class ItemController {
       data: null,
     };
     try {
-      const { orderCode, totalPrice, customerId, itemsId, quantity } = req.body;
+      const { itemName, itemCode, stock, price } = req.body;
 
-      const newOrder = await prisma.order.create({
+      const newOrder = await prisma.item.create({
         data: {
-          order_code: orderCode,
-          total_price: BigInt(totalPrice),
-          customer: {
-            connect: { customer_id: customerId },
-          },
-          items: {
-            connect: { items_id: itemsId },
-          },
-          quantity,
-        },
-        include: {
-          customer: true,
-          items: true,
+          items_name: itemName,
+          items_code: itemCode,
+          stock,
+          price,
+          is_available: stock > 1 ? 1 : 0,
+          last_re_stock: new Date(),
         },
       });
       response.message = "Create item success";
@@ -64,15 +57,18 @@ class ItemController {
       data: null,
     };
     try {
-      const orderId = parseInt(req.params.id, 10);
-      const { quantity } = req.body;
+      const itemId = parseInt(req.params.id, 10);
+      const { itemName, stock, price } = req.body;
 
-      await prisma.order.update({
-        where: { order_id: orderId },
-        data: { quantity },
-        include: {
-          customer: true,
-          items: true,
+      await prisma.item.update({
+        where: { items_id: itemId },
+        data: {
+          items_name: itemName,
+          stock,
+          price,
+          is_available: stock > 0 ? 1 : 0,
+          last_re_stock: stock > 1 && new Date(),
+          updatedAt: new Date(),
         },
       });
       response.message = "Edit item success";
@@ -88,17 +84,12 @@ class ItemController {
       data: null,
     };
     try {
-      const orderId = parseInt(req.params.id, 10);
+      const itemId = parseInt(req.params.id, 10);
 
-      const deletedItem = await prisma.item.delete({
-        where: { order_id: orderId },
-        include: {
-          customer: true,
-          items: true,
-        },
+      await prisma.item.delete({
+        where: { items_id: itemId },
       });
       response.message = "Delete item success";
-      response.data = deletedItem;
       res.status(200).json(response);
     } catch (error) {
       res.status(500).json({ message: "Delete item failed" });

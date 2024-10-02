@@ -33,7 +33,7 @@ model Customer {
   customer_code    String
   customer_phone   String
   is_active        Int
-  last_order_date  DateTime @default(now())
+  last_order_date  DateTime? @default(now())
   pic              String
   orders           Order[]
   createdAt        DateTime @default(now())

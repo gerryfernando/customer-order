@@ -13,11 +13,11 @@ class CustomerController {
       total: 0,
     };
     try {
-      const orders = await prisma.customer.findMany();
+      const customers = await prisma.customer.findMany();
 
-      response.total = orders.length;
+      response.total = customers.length;
       response.message = "Get list customer success";
-      response.data = orders;
+      response.data = customers;
       res.status(200).json(response);
     } catch (error) {
       response.message = "error: " + error;
@@ -31,23 +31,22 @@ class CustomerController {
       data: null,
     };
     try {
-      const { orderCode, totalPrice, customerId, itemsId, quantity } = req.body;
+      const {
+        customerAddress,
+        customerCode,
+        customerName,
+        customerPhone,
+        pic,
+      } = req.body;
 
-      const newOrder = await prisma.order.create({
+      const newOrder = await prisma.customer.create({
         data: {
-          order_code: orderCode,
-          total_price: BigInt(totalPrice),
-          customer: {
-            connect: { customer_id: customerId },
-          },
-          items: {
-            connect: { items_id: itemsId },
-          },
-          quantity,
-        },
-        include: {
-          customer: true,
-          items: true,
+          customer_name: customerName,
+          customer_code: customerCode,
+          customer_address: customerAddress,
+          customer_phone: customerPhone,
+          is_active: 1,
+          pic,
         },
       });
       response.message = "Create customer success";
@@ -64,15 +63,16 @@ class CustomerController {
       data: null,
     };
     try {
-      const orderId = parseInt(req.params.id, 10);
-      const { quantity } = req.body;
+      const customerId = parseInt(req.params.id, 10);
+      const { customerAddress, customerName, customerPhone, pic } = req.body;
 
-      await prisma.order.update({
-        where: { order_id: orderId },
-        data: { quantity },
-        include: {
-          customer: true,
-          items: true,
+      await prisma.customer.update({
+        where: { customer_id: customerId },
+        data: {
+          customer_name: customerName,
+          customer_address: customerAddress,
+          customer_phone: customerPhone,
+          pic,
         },
       });
       response.message = "Edit customer success";
@@ -88,17 +88,12 @@ class CustomerController {
       data: null,
     };
     try {
-      const orderId = parseInt(req.params.id, 10);
+      const customerId = parseInt(req.params.id, 10);
 
-      const deletedItem = await prisma.item.delete({
-        where: { order_id: orderId },
-        include: {
-          customer: true,
-          items: true,
-        },
+      await prisma.customer.delete({
+        where: { customer_id: customerId },
       });
       response.message = "Delete customer success";
-      response.data = deletedItem;
       res.status(200).json(response);
     } catch (error) {
       res.status(500).json({ message: "Delete customer failed" });
