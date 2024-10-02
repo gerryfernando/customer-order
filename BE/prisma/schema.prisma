@@ -18,11 +18,11 @@ model Item {
   items_name    String
   items_code    String
   stock         Int
-  price         BigInt
+  price         Int
   is_available  Int
   last_re_stock DateTime @default(now())
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  updatedAt     DateTime? @updatedAt
   orders        Order[]
 }
 
@@ -37,19 +37,19 @@ model Customer {
   pic              String
   orders           Order[]
   createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  updatedAt        DateTime? @updatedAt
 }
 
 model Order {
   order_id    Int      @id @default(autoincrement())
   order_code  String   @db.VarChar(255)
   order_date  DateTime @default(now())
-  total_price BigInt
+  total_price Int
   customer    Customer @relation(fields: [customer_id], references: [customer_id])
   customer_id Int
   items       Item     @relation(fields: [items_id], references: [items_id])
   items_id    Int
   quantity    Int
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime? @updatedAt
 }
