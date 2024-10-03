@@ -8,17 +8,15 @@ type Props = {
 };
 const MainLayout = (props: Props) => {
   const styles = {
-    padding: "75px 50px",
+    padding: "75px 50px 75px 240px",
     margin: "0 auto",
-    maxHeight: "75vh",
-    overflow: "auto",
   };
   const { children } = props;
   return (
     <>
       <Navbar />
-      <Sidebar />
       <Container maxWidth="xl">
+        <Sidebar />
         <Box sx={styles}>{children}</Box>
       </Container>
       <Footer />
