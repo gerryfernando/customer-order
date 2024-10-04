@@ -24,6 +24,7 @@ app.get("/order", OrderController.getOrder);
 app.post("/order", OrderController.createOrder);
 app.put("/order/:id", OrderController.editOrder);
 app.delete("/order/:id", OrderController.deleteOrder);
+app.get("/order/download", OrderController.downladPdf);
 
 // Item
 app.get("/item", ItemController.getItem);
